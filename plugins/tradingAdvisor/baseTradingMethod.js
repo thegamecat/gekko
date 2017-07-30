@@ -33,6 +33,14 @@ var Indicators = {
     factory: require(indicatorsPath + 'MACD'),
     input: 'price'
   },
+  TWIG: {
+    factory: require(indicatorsPath + 'TWIG'),
+    input: 'candle'
+  },
+  FIBO: {
+    factory: require(indicatorsPath + 'FIBO'),
+    input: 'candle'
+  },
   EMA: {
     factory: require(indicatorsPath + 'EMA'),
     input: 'price'
@@ -147,7 +155,7 @@ Base.prototype.tick = function(candle) {
 
   this.age++;
 
-  if(this.asyncTick) {
+ // if(this.asyncTick) {
     this.candleProps.open.push(candle.open);
     this.candleProps.high.push(candle.high);
     this.candleProps.low.push(candle.low);
@@ -161,7 +169,7 @@ Base.prototype.tick = function(candle) {
       this.candleProps.close.shift();
       this.candleProps.volume.shift();
     }
-  }
+  //}
 
   // update all indicators
   var price = candle[this.priceValue];
