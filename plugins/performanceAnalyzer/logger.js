@@ -10,6 +10,20 @@ const mode = util.gekkoMode();
 const config = util.getConfig();
 const calcConfig = config.paperTrader;
 const log = require(dirs.core + 'log');
+var fsw = require('fs');
+var grtimestamp = '';
+var grreadtime = '0';
+var outtxt = '0';
+var headerset = '';
+var headertxt = '';
+var csize = config.tradingAdvisor.candleSize;
+var exchange = config.watch.exchange;
+var currency = config.watch.currency;
+var asset = config.watch.asset;
+var strat = config.tradingAdvisor.method;
+var filetime = new Date().getTime();
+var obvoutput = 0;
+var fname = "/mnt/f/bash/gekko050/gekko/strategy_logs/"+strat+"-"+csize+"-"+exchange+"-"+currency+"-"+asset+"-"+filetime+"-roundtrips.csv";	
 
 const Logger = function(watchConfig) {
   this.currency = watchConfig.currency;
@@ -44,19 +58,44 @@ Logger.prototype.logReport = function(trade, report) {
 }
 
 Logger.prototype.logRoundtripHeading = function() {
-  log.info('(ROUNDTRIP)', 'entry date\t\texit date\t\texposed duration P&L\t\t\tprofit');
+//  log.info('(ROUNDTRIP)', 'entry date\t\texit date\t\tEntry Price\t\tExit Price\t\tP&L\t\t\tProfit\t\texposed duration');
+  log.info('(Roundtrip)', 'Entry Date\t\t\tExit Date\t\t\tnPrice\t\txPrice\t\tnBalance\txBalance\tExposed duration');
 }
 
 Logger.prototype.logRoundtrip = function(rt) {
+//	console.log(rt);
   const display = [
     rt.entryAt.format('YYYY-MM-DD HH:mm'),
     rt.exitAt.format('YYYY-MM-DD HH:mm'),
-    moment.duration(rt.duration).humanize(),
-    rt.pnl,
-    rt.profit
+	rt.entryPrice,
+	rt.exitPrice,
+//    rt.pnl,
+//    rt.profit,
+	rt.entryBalance.toFixed(3),
+	rt.exitBalance.toFixed(3),
+    moment.duration(rt.duration).humanize()	
   ];
 
-  log.info('(ROUNDTRIP)', display.join('\t'));
+  headertxt = "Entry at,Exit at, Entry price, Exit price, Entry balance, Exit balance,Duration,PnL, Profit\n";
+  outtxt = rt.entryAt.format('YYYY-MM-DD HH:mm')+","+ rt.exitAt.format('YYYY-MM-DD HH:mm')+","+ rt.entryPrice+","+rt.exitPrice+","+rt.entryBalance.toFixed(3)+","+rt.exitBalance.toFixed(3)+","+moment.duration(rt.duration).humanize()	+","+rt.pnl+","+ rt.profit+"\n";
+  	
+
+    if (headerset === "") {
+        fsw.appendFileSync(fname, headertxt, encoding = 'utf8');
+        headerset = "1";
+    }
+    // console.log(this.fname);
+    fsw.appendFileSync(fname, outtxt, encoding = 'utf8');
+
+	outtxt = "";  
+  
+  
+  
+  
+  
+  
+  
+  log.info('(Roundtrip)', display.join('\t\t'));
 }
 
 
