@@ -78,6 +78,7 @@ app
   .use(router.allowedMethods());
 
 server.on('request', app.callback());
+server.setTimeout(0);
 server.listen(config.api.port, config.api.host, '::', () => {
   const host = `${config.ui.host}:${config.ui.port}${config.ui.path}`;
 
